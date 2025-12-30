@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const User = require('../models/User');
+const generateToken = require('../utils/generateToken');
 
 // @desc    Register a new user
 // @route   POST /api/users
@@ -24,7 +25,7 @@ const registerUser = asyncHandler(async (req, res) => {
     const user = await User.create({
         name,
         email,
-        password, // Note: Password hashing should be added here
+        password,
     });
 
     if (user) {
@@ -32,7 +33,8 @@ const registerUser = asyncHandler(async (req, res) => {
             _id: user._id,
             name: user.name,
             email: user.email,
-            token: null, // Token generation should be added here
+            isAdmin: user.isAdmin,
+            token: generateToken(user._id),
         });
     } else {
         res.status(400);
@@ -48,13 +50,13 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const user = await User.findOne({ email });
 
-    // Check user and password match (Plain text for now, should use bcrypt)
-    if (user && user.password === password) {
+    if (user && (await user.matchPassword(password))) {
         res.json({
             _id: user._id,
             name: user.name,
             email: user.email,
-            token: null, // Token generation should be added here
+            isAdmin: user.isAdmin,
+            token: generateToken(user._id),
         });
     } else {
         res.status(401);

@@ -1,39 +1,50 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { ShoppingCart } from 'lucide-react'
-
-const products = [
-    {
-        id: 1,
-        name: 'Oak Minimalist Chair',
-        price: '$249',
-        image: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-        category: 'Chairs'
-    },
-    {
-        id: 2,
-        name: 'Walnut Coffee Table',
-        price: '$499',
-        image: 'https://images.unsplash.com/photo-1532372320572-cda25653a26d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-        category: 'Tables'
-    },
-    {
-        id: 3,
-        name: 'Teak Bedside Lamp',
-        price: '$129',
-        image: 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-        category: 'Lighting'
-    },
-    {
-        id: 4,
-        name: 'Mahogany Bookshelf',
-        price: '$899',
-        image: 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-        category: 'Storage'
-    }
-]
+import { ShoppingCart, Loader2 } from 'lucide-react'
+import { useCart } from '../context/CartContext'
 
 const FeaturedProducts = () => {
+    const [products, setProducts] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
+    const { addToCart } = useCart()
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/api/products')
+                const data = await response.json()
+                if (response.ok) {
+                    setProducts(data)
+                } else {
+                    setError('Failed to fetch products')
+                }
+            } catch (err) {
+                setError('Something went wrong. Please try again later.')
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchProducts()
+    }, [])
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center py-24">
+                <Loader2 className="h-10 w-10 text-primary-600 animate-spin" />
+            </div>
+        )
+    }
+
+    if (error) {
+        return (
+            <div className="text-center py-24 text-red-600 font-medium">
+                {error}
+            </div>
+        )
+    }
+
     return (
         <div className="bg-white py-16 sm:py-24" id="shop">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -49,7 +60,7 @@ const FeaturedProducts = () => {
                 <div className="mt-12 grid gap-y-10 gap-x-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
                     {products.map((product) => (
                         <motion.div
-                            key={product.id}
+                            key={product._id}
                             whileHover={{ y: -5 }}
                             className="group relative cursor-pointer"
                         >
@@ -70,9 +81,16 @@ const FeaturedProducts = () => {
                                     </h3>
                                     <p className="mt-1 text-sm text-gray-500">{product.category}</p>
                                 </div>
-                                <p className="text-sm font-medium text-gray-900">{product.price}</p>
+                                <p className="text-sm font-medium text-gray-900">${product.price}</p>
                             </div>
-                            <button className="mt-4 w-full bg-primary-600 text-white py-2 px-4 rounded-md opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-2 cursor-pointer">
+                            <button
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    addToCart(product, 1);
+                                }}
+                                className="mt-4 w-full bg-primary-600 text-white py-2 px-4 rounded-md opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-2 cursor-pointer z-50 relative"
+                            >
                                 <ShoppingCart className="h-4 w-4" />
                                 <span>Add to Cart</span>
                             </button>

@@ -16,8 +16,15 @@ app.get('/', (req, res) => {
     res.send('API is running...');
 });
 
-// Routes will be added here
+// Routes
 app.use('/api/users', require('./routes/userRoutes'));
+app.use('/api/products', require('./routes/productRoutes'));
+app.use('/api/orders', require('./routes/orderRoutes'));
+
+const { notFound, errorHandler } = require('./middleware/errorMiddleware');
+
+app.use(notFound);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 

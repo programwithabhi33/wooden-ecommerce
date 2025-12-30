@@ -1,10 +1,27 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { Search, ShoppingCart, User, Menu, X } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { Search, ShoppingCart, User, Menu, X, LogOut } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useCart } from '../context/CartContext'
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false)
+    const [user, setUser] = useState(null)
+    const navigate = useNavigate()
+    const { cartItems } = useCart()
+
+    useEffect(() => {
+        const userInfo = localStorage.getItem('userInfo')
+        if (userInfo) {
+            setUser(JSON.parse(userInfo))
+        }
+    }, [])
+
+    const handleLogout = () => {
+        localStorage.removeItem('userInfo')
+        setUser(null)
+        navigate('/login')
+    }
 
     return (
         <nav className="bg-white shadow-md sticky top-0 z-50">
@@ -29,14 +46,29 @@ const Navbar = () => {
 
                     {/* Desktop Icons */}
                     <div className="hidden md:flex items-center space-x-6">
-                        <Link to="/login" className="text-gray-600 hover:text-primary-600 transition-colors">
-                            <User className="h-6 w-6" />
-                        </Link>
+                        {user ? (
+                            <div className="flex items-center space-x-4">
+                                <Link to="/profile" className="text-gray-700 font-medium hover:text-primary-600">Hi, {user.name.split(' ')[0]}</Link>
+                                <button
+                                    onClick={handleLogout}
+                                    className="text-gray-600 hover:text-red-600 transition-colors"
+                                    title="Logout"
+                                >
+                                    <LogOut className="h-6 w-6" />
+                                </button>
+                            </div>
+                        ) : (
+                            <Link to="/login" className="text-gray-600 hover:text-primary-600 transition-colors">
+                                <User className="h-6 w-6" />
+                            </Link>
+                        )}
                         <Link to="/cart" className="text-gray-600 hover:text-primary-600 transition-colors relative">
                             <ShoppingCart className="h-6 w-6" />
-                            <span className="absolute -top-2 -right-2 bg-primary-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                                0
-                            </span>
+                            {cartItems.length > 0 && (
+                                <span className="absolute -top-2 -right-2 bg-primary-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                                    {cartItems.reduce((acc, item) => acc + item.qty, 0)}
+                                </span>
+                            )}
                         </Link>
                     </div>
 
@@ -71,21 +103,36 @@ const Navbar = () => {
                                 <Search className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
                             </div>
                             <div className="flex flex-col space-y-2">
-                                <Link
-                                    to="/login"
-                                    className="flex items-center space-x-2 text-gray-600 hover:text-primary-600 py-2"
-                                    onClick={() => setIsOpen(false)}
-                                >
-                                    <User className="h-5 w-5" />
-                                    <span>Account</span>
-                                </Link>
+                                {user ? (
+                                    <>
+                                        <div className="px-2 py-2 text-gray-800 font-bold border-b border-gray-100">
+                                            Hi, {user.name}
+                                        </div>
+                                        <button
+                                            onClick={handleLogout}
+                                            className="flex items-center space-x-2 text-red-600 hover:bg-red-50 py-2 px-2 rounded-md transition-colors"
+                                        >
+                                            <LogOut className="h-5 w-5" />
+                                            <span>Logout</span>
+                                        </button>
+                                    </>
+                                ) : (
+                                    <Link
+                                        to="/login"
+                                        className="flex items-center space-x-2 text-gray-600 hover:text-primary-600 py-2"
+                                        onClick={() => setIsOpen(false)}
+                                    >
+                                        <User className="h-5 w-5" />
+                                        <span>Account</span>
+                                    </Link>
+                                )}
                                 <Link
                                     to="/cart"
                                     className="flex items-center space-x-2 text-gray-600 hover:text-primary-600 py-2"
                                     onClick={() => setIsOpen(false)}
                                 >
                                     <ShoppingCart className="h-5 w-5" />
-                                    <span>Cart (0)</span>
+                                    <span>Cart ({cartItems.reduce((acc, item) => acc + item.qty, 0)})</span>
                                 </Link>
                             </div>
                         </div>
