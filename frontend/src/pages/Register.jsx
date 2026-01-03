@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import Navbar from '../components/Navbar'
@@ -13,10 +13,22 @@ const Register = () => {
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
 
+    useEffect(() => {
+        if (localStorage.getItem('userInfo')) {
+            navigate('/')
+        }
+    }, [navigate])
+
     const handleSubmit = async (e) => {
         e.preventDefault()
         setLoading(true)
         setError('')
+
+        if (!name || !email || !password || !confirmPassword) {
+            setError('Please fill in all fields')
+            setLoading(false)
+            return
+        }
 
         if (password !== confirmPassword) {
             setError('Passwords do not match')
