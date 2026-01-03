@@ -28,6 +28,12 @@ const Cart = () => {
             return;
         }
 
+        if (!address || !city || !postalCode || !country) {
+            alert("Please fill in all shipping address fields.");
+            setLoading(false);
+            return;
+        }
+
         saveShippingAddress({ address, city, postalCode, country });
 
         try {
@@ -231,8 +237,8 @@ const Cart = () => {
                                     </div>
                                     <button
                                         onClick={checkoutHandler}
-                                        disabled={loading}
-                                        className="w-full mt-8 bg-black text-white py-4 rounded-full font-semibold flex items-center justify-center space-x-2 hover:bg-gray-800 transition-all duration-300 group disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                        disabled={loading || !address || !city || !postalCode || !country}
+                                        className="cursor-pointer w-full mt-8 bg-black text-white py-4 rounded-full font-semibold flex items-center justify-center space-x-2 hover:bg-gray-800 transition-all duration-300 group disabled:bg-gray-400 disabled:cursor-not-allowed"
                                     >
                                         {loading ? (
                                             <Loader2 className="w-5 h-5 animate-spin" />
