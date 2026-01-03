@@ -125,14 +125,14 @@ const Cart = () => {
                                                     <div className="flex items-center border border-gray-200 rounded-full">
                                                         <button
                                                             onClick={() => updateQty(item._id, Math.max(1, item.qty - 1))}
-                                                            className="p-2 hover:bg-gray-100 rounded-l-full transition-colors"
+                                                            className="p-2 cursor-pointer hover:bg-gray-100 rounded-l-full transition-colors"
                                                         >
                                                             <ChevronLeft className="w-4 h-4" />
                                                         </button>
                                                         <span className="w-8 text-center font-medium">{item.qty}</span>
                                                         <button
                                                             onClick={() => updateQty(item._id, item.qty + 1)}
-                                                            className="p-2 hover:bg-gray-100 rounded-r-full transition-colors"
+                                                            className="p-2 cursor-pointer hover:bg-gray-100 rounded-r-full transition-colors"
                                                         >
                                                             <ChevronRight className="w-4 h-4" />
                                                         </button>

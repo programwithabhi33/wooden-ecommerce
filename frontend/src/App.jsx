@@ -6,12 +6,15 @@ import ForgotPassword from './pages/ForgotPassword'
 import Cart from './pages/Cart'
 import Profile from './pages/Profile'
 import OrderDetails from './pages/OrderDetails'
+import ProductDetails from './pages/ProductDetails'
 
 function App() {
   return (
     <div className="min-h-screen bg-primary-50 text-gray-800">
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/search/:keyword" element={<Home />} />
+        <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />

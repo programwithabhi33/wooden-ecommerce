@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { ShoppingCart, Loader2 } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 
-const FeaturedProducts = () => {
+const FeaturedProducts = ({ keyword }) => {
     const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
@@ -12,7 +13,12 @@ const FeaturedProducts = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/products')
+                // If keyword exists, append it to the URL
+                const url = keyword
+                    ? `http://localhost:5000/api/products?keyword=${keyword}`
+                    : 'http://localhost:5000/api/products';
+
+                const response = await fetch(url)
                 const data = await response.json()
                 if (response.ok) {
                     setProducts(data)
@@ -27,7 +33,7 @@ const FeaturedProducts = () => {
         }
 
         fetchProducts()
-    }, [])
+    }, [keyword])
 
     if (loading) {
         return (
@@ -50,10 +56,10 @@ const FeaturedProducts = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center">
                     <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl font-serif">
-                        Featured Collections
+                        {keyword ? `Search Results for "${keyword}"` : 'Featured Collections'}
                     </h2>
                     <p className="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
-                        Discover our most popular pieces, crafted with care and precision.
+                        {keyword ? 'Found these products matching your search.' : 'Discover our most popular pieces, crafted with care and precision.'}
                     </p>
                 </div>
 
@@ -74,10 +80,10 @@ const FeaturedProducts = () => {
                             <div className="mt-4 flex justify-between">
                                 <div>
                                     <h3 className="text-sm text-gray-700">
-                                        <a href="#">
+                                        <Link to={`/product/${product._id}`}>
                                             <span aria-hidden="true" className="absolute inset-0" />
                                             {product.name}
-                                        </a>
+                                        </Link>
                                     </h3>
                                     <p className="mt-1 text-sm text-gray-500">{product.category}</p>
                                 </div>

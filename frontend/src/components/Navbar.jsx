@@ -23,6 +23,18 @@ const Navbar = () => {
         navigate('/login')
     }
 
+    const [keyword, setKeyword] = useState('');
+
+    const searchHandler = (e) => {
+        e.preventDefault();
+        if (keyword.trim()) {
+            navigate(`/search/${keyword}`);
+            setIsOpen(false);
+        } else {
+            navigate('/');
+        }
+    };
+
     return (
         <nav className="bg-white shadow-md sticky top-0 z-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -33,16 +45,20 @@ const Navbar = () => {
                     </Link>
 
                     {/* Desktop Search */}
-                    <div className="hidden md:flex flex-1 max-w-md mx-8">
+                    <form onSubmit={searchHandler} className="hidden md:flex flex-1 max-w-md mx-8">
                         <div className="relative w-full">
                             <input
                                 type="text"
                                 placeholder="Search for furniture..."
                                 className="w-full px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                                value={keyword}
+                                onChange={(e) => setKeyword(e.target.value)}
                             />
-                            <Search className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
+                            <button type="submit" className="absolute right-3 top-2.5">
+                                <Search className="h-5 w-5 text-gray-400" />
+                            </button>
                         </div>
-                    </div>
+                    </form>
 
                     {/* Desktop Icons */}
                     <div className="hidden md:flex items-center space-x-6">
@@ -51,7 +67,7 @@ const Navbar = () => {
                                 <Link to="/profile" className="text-gray-700 font-medium hover:text-primary-600">Hi, {user.name.split(' ')[0]}</Link>
                                 <button
                                     onClick={handleLogout}
-                                    className="text-gray-600 hover:text-red-600 transition-colors"
+                                    className="cursor-pointer text-gray-600 hover:text-red-600 transition-colors"
                                     title="Logout"
                                 >
                                     <LogOut className="h-6 w-6" />
@@ -94,14 +110,18 @@ const Navbar = () => {
                         className="md:hidden bg-white border-t border-gray-100"
                     >
                         <div className="px-4 pt-4 pb-6 space-y-4">
-                            <div className="relative">
+                            <form onSubmit={searchHandler} className="relative">
                                 <input
                                     type="text"
                                     placeholder="Search..."
                                     className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                    value={keyword}
+                                    onChange={(e) => setKeyword(e.target.value)}
                                 />
-                                <Search className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
-                            </div>
+                                <button type="submit" className="absolute right-3 top-2.5">
+                                    <Search className="h-5 w-5 text-gray-400" />
+                                </button>
+                            </form>
                             <div className="flex flex-col space-y-2">
                                 {user ? (
                                     <>
