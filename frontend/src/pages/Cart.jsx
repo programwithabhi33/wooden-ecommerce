@@ -145,7 +145,7 @@ const Cart = () => {
                                                     </div>
                                                     <button
                                                         onClick={() => removeFromCart(item._id)}
-                                                        className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+                                                        className="cursor-pointer p-2 text-gray-400 hover:text-red-600 transition-colors"
                                                     >
                                                         <Trash2 className="w-5 h-5" />
                                                     </button>
