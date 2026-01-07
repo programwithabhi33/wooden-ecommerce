@@ -78,6 +78,11 @@ const Navbar = () => {
                                 <User className="h-6 w-6" />
                             </Link>
                         )}
+                        {user && user.isAdmin && (
+                            <Link to="/admin/productlist" className="text-gray-700 font-medium hover:text-primary-600">
+                                Admin
+                            </Link>
+                        )}
                         <Link to="/cart" className="text-gray-600 hover:text-primary-600 transition-colors relative">
                             <ShoppingCart className="h-6 w-6" />
                             {cartItems.length > 0 && (
