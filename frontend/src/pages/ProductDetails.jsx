@@ -98,9 +98,10 @@ const ProductDetails = () => {
                     <div className="flex flex-col-reverse">
                         <div className="w-full aspect-w-1 aspect-h-1 bg-gray-100 rounded-lg overflow-hidden sm:aspect-w-2 sm:aspect-h-3">
                             <img
-                                src={product.image}
+                                src={product.image && (product.image.startsWith('http') ? product.image : `http://localhost:5000${product.image}`)}
                                 alt={product.name}
                                 className="w-full h-full object-center object-cover object-contain hover:scale-105 transition-transform duration-500"
+                                onError={(e) => { e.target.style.display = 'none' }}
                             />
                         </div>
                     </div>
@@ -111,7 +112,7 @@ const ProductDetails = () => {
 
                         <div className="mt-3">
                             <h2 className="sr-only">Product information</h2>
-                            <p className="text-3xl text-gray-900">${product.price}</p>
+                            <p className="text-3xl text-gray-900">₹{product.price}</p>
                         </div>
 
                         {/* Reviews */}
@@ -193,7 +194,7 @@ const ProductDetails = () => {
                                     </div>
                                     <div className="ml-3 text-sm">
                                         <p className="font-medium text-gray-900">Free Shipping</p>
-                                        <p className="text-gray-500">On orders over $500</p>
+                                        <p className="text-gray-500">On orders over ₹500</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start">

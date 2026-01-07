@@ -63,43 +63,19 @@ const ProductList = () => {
         }
     };
 
-    const createProductHandler = async () => {
-        setCreateLoading(true);
-        try {
-            const response = await fetch('http://localhost:5000/api/products', {
-                method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${userInfo.token}`,
-                },
-            });
-
-            const data = await response.json();
-            if (response.ok) {
-                navigate(`/admin/product/${data._id}/edit`);
-            } else {
-                alert(data.message || 'Failed to create product');
-            }
-        } catch (err) {
-            alert(err.message);
-        } finally {
-            setCreateLoading(false);
-        }
-    };
-
     return (
         <div className="flex flex-col min-h-screen bg-gray-50">
             <Navbar />
             <div className="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-2xl font-bold text-gray-900">Products</h1>
-                    <button
-                        onClick={createProductHandler}
-                        disabled={createLoading}
+                    <Link
+                        to="/admin/product/create"
                         className="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded inline-flex items-center disabled:opacity-50 cursor-pointer"
                     >
-                        {createLoading ? <Loader2 className="animate-spin mr-2 h-5 w-5" /> : <Plus className="mr-2 h-5 w-5" />}
+                        <Plus className="mr-2 h-5 w-5" />
                         Create Product
-                    </button>
+                    </Link>
                 </div>
 
                 {loading ? (
@@ -121,7 +97,6 @@ const ProductList = () => {
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NAME</th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PRICE</th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">CATEGORY</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">BRAND</th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ACTIONS</th>
                                     </tr>
                                 </thead>
@@ -130,9 +105,8 @@ const ProductList = () => {
                                         <tr key={product._id}>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product._id}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{product.name}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${product.price}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹{product.price}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.category}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.brand}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <Link
                                                     to={`/admin/product/${product._id}/edit`}

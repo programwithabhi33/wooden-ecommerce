@@ -72,9 +72,10 @@ const FeaturedProducts = ({ keyword }) => {
                         >
                             <div className="w-full min-h-80 bg-gray-200 aspect-w-1 aspect-h-1 rounded-md overflow-hidden group-hover:opacity-75 lg:h-80 lg:aspect-none">
                                 <img
-                                    src={product.image}
+                                    src={product.image.startsWith('http') ? product.image : `http://localhost:5000${product.image}`}
                                     alt={product.name}
-                                    className="w-full h-full object-center object-cover lg:w-full lg:h-full"
+                                    className="w-full h-full object-center object-cover group-hover:opacity-75"
+                                    onError={(e) => { e.target.style.display = 'none' }}
                                 />
                             </div>
                             <div className="mt-4 flex justify-between">
@@ -87,7 +88,7 @@ const FeaturedProducts = ({ keyword }) => {
                                     </h3>
                                     <p className="mt-1 text-sm text-gray-500">{product.category}</p>
                                 </div>
-                                <p className="text-sm font-medium text-gray-900">${product.price}</p>
+                                <p className="text-sm font-medium text-gray-900">₹{product.price}</p>
                             </div>
                             <button
                                 onClick={(e) => {

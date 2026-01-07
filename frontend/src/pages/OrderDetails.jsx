@@ -102,11 +102,16 @@ const OrderDetails = () => {
                                 {order.orderItems.map((item, index) => (
                                     <div key={index} className="flex items-center">
                                         <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                                            <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                            <img
+                                                src={item.image.startsWith('http') ? item.image : `http://localhost:5000${item.image}`}
+                                                alt={item.name}
+                                                className="w-full h-full object-cover"
+                                                onError={(e) => { e.target.style.display = 'none' }}
+                                            />
                                         </div>
                                         <div className="ml-4 flex-1">
                                             <p className="font-bold text-gray-900">{item.name}</p>
-                                            <p className="text-sm text-gray-500">{item.qty} x ${item.price} = ${item.qty * item.price}</p>
+                                            <p className="text-sm text-gray-500">{item.qty} x ₹{item.price} = ₹{item.qty * item.price}</p>
                                         </div>
                                     </div>
                                 ))}
@@ -117,7 +122,7 @@ const OrderDetails = () => {
                         <div className="p-8 bg-gray-50 border-t border-gray-100">
                             <div className="flex justify-between items-center">
                                 <span className="text-xl font-bold text-gray-900">Total Price</span>
-                                <span className="text-2xl font-extrabold text-orange-600">${order.totalPrice}</span>
+                                <span className="text-2xl font-extrabold text-orange-600">₹{order.totalPrice}</span>
                             </div>
                         </div>
                     </div>

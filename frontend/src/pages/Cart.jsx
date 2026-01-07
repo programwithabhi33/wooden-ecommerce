@@ -118,14 +118,15 @@ const Cart = () => {
                                             <li key={item._id} className="p-6 flex flex-col sm:flex-row items-center">
                                                 <div className="w-24 h-24 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden mb-4 sm:mb-0">
                                                     <img
-                                                        src={item.image}
+                                                        src={item.image.startsWith('http') ? item.image : `http://localhost:5000${item.image}`}
                                                         alt={item.name}
                                                         className="w-full h-full object-cover"
+                                                        onError={(e) => { e.target.style.display = 'none' }}
                                                     />
                                                 </div>
                                                 <div className="sm:ml-6 flex-1 text-center sm:text-left">
                                                     <h3 className="text-lg font-semibold text-gray-900">{item.name}</h3>
-                                                    <p className="mt-1 text-orange-600 font-bold">${item.price}</p>
+                                                    <p className="mt-1 text-orange-600 font-bold">₹{item.price}</p>
                                                 </div>
                                                 <div className="mt-4 sm:mt-0 flex items-center space-x-4">
                                                     <div className="flex items-center border border-gray-200 rounded-full">
@@ -151,7 +152,7 @@ const Cart = () => {
                                                     </button>
                                                 </div>
                                                 <div className="mt-4 sm:mt-0 sm:ml-8 text-right min-w-[80px]">
-                                                    <p className="text-lg font-bold text-gray-900">${item.price * item.qty}</p>
+                                                    <dd className="text-sm font-medium text-gray-900">₹{item.price * item.qty}</dd>
                                                 </div>
                                             </li>
                                         ))}
@@ -224,15 +225,15 @@ const Cart = () => {
                                     <div className="space-y-4 text-sm">
                                         <div className="flex justify-between text-gray-600">
                                             <span>Subtotal</span>
-                                            <span className="font-semibold text-gray-900">${subtotal}</span>
+                                            <span className="font-semibold text-gray-900">₹{subtotal}</span>
                                         </div>
                                         <div className="flex justify-between text-gray-600">
                                             <span>Shipping</span>
-                                            <span className="font-semibold text-gray-900">${shipping}</span>
+                                            <span className="font-semibold text-gray-900">₹{shipping}</span>
                                         </div>
                                         <div className="border-t border-gray-100 pt-4 flex justify-between items-center">
                                             <span className="text-lg font-bold text-gray-900">Total</span>
-                                            <span className="text-2xl font-bold text-orange-600">${total}</span>
+                                            <span className="text-2xl font-bold text-orange-600">₹{total}</span>
                                         </div>
                                     </div>
                                     <button
