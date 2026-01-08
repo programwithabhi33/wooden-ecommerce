@@ -17,6 +17,7 @@ export const CartProvider = ({ children }) => {
             city: '',
             postalCode: '',
             country: '',
+            contactNumber: '',
         };
     });
 

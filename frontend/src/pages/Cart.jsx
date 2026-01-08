@@ -13,6 +13,7 @@ const Cart = () => {
     const [city, setCity] = useState(shippingAddress.city || '');
     const [postalCode, setPostalCode] = useState(shippingAddress.postalCode || '');
     const [country, setCountry] = useState(shippingAddress.country || '');
+    const [contactNumber, setContactNumber] = useState(shippingAddress.contactNumber || '');
     const [loading, setLoading] = useState(false);
 
     const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.qty, 0);
@@ -28,13 +29,13 @@ const Cart = () => {
             return;
         }
 
-        if (!address || !city || !postalCode || !country) {
+        if (!address || !city || !postalCode || !country || !contactNumber) {
             alert("Please fill in all shipping address fields.");
             setLoading(false);
             return;
         }
 
-        saveShippingAddress({ address, city, postalCode, country });
+        saveShippingAddress({ address, city, postalCode, country, contactNumber });
 
         try {
             const response = await fetch('http://localhost:5000/api/orders', {
@@ -51,7 +52,7 @@ const Cart = () => {
                         price: item.price,
                         product: item._id,
                     })),
-                    shippingAddress: { address, city, postalCode, country },
+                    shippingAddress: { address, city, postalCode, country, contactNumber },
                     paymentMethod: 'Stripe',
                     itemsPrice: subtotal,
                     shippingPrice: shipping,
@@ -212,6 +213,17 @@ const Cart = () => {
                                                 <Globe className="absolute right-4 top-3.5 text-gray-400 w-5 h-5" />
                                             </div>
                                         </div>
+                                        <div className="md:col-span-2">
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">Contact Number</label>
+                                            <input
+                                                type="text"
+                                                value={contactNumber}
+                                                onChange={(e) => setContactNumber(e.target.value)}
+                                                placeholder="+91 9876543210"
+                                                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
+                                                required
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -258,9 +270,9 @@ const Cart = () => {
                         </div>
                     )}
                 </div>
-            </div>
+            </div >
             <Footer />
-        </div>
+        </div >
     );
 };
 

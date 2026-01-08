@@ -21,9 +21,9 @@ const addOrderItems = asyncHandler(async (req, res) => {
         console.error('No order items');
         res.status(400);
         throw new Error('No order items');
-    } else if (!shippingAddress || !shippingAddress.address || !shippingAddress.city || !shippingAddress.postalCode || !shippingAddress.country) {
+    } else if (!shippingAddress || !shippingAddress.address || !shippingAddress.city || !shippingAddress.postalCode || !shippingAddress.country || !shippingAddress.contactNumber) {
         res.status(400);
-        throw new Error('Please provide a complete shipping address');
+        throw new Error('Please provide a complete shipping address including contact number');
     } else {
         console.log('Creating Stripe session...');
         try {

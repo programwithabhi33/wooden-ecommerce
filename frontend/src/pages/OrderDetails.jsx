@@ -74,9 +74,13 @@ const OrderDetails = () => {
                                 <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
                                     <MapPin className="mr-2 text-orange-600 w-5 h-5" /> Shipping
                                 </h3>
-                                <p className="text-gray-600">{order.shippingAddress.address}</p>
-                                <p className="text-gray-600">{order.shippingAddress.city}, {order.shippingAddress.postalCode}</p>
-                                <p className="text-gray-600">{order.shippingAddress.country}</p>
+                                <p className="text-gray-600">
+                                    {order.shippingAddress.address}, {order.shippingAddress.city},{' '}
+                                    {order.shippingAddress.postalCode}, {order.shippingAddress.country}
+                                </p>
+                                <p className="text-gray-600 mt-2">
+                                    <span className="font-semibold">Contact:</span> {order.shippingAddress.contactNumber}
+                                </p>
                             </div>
 
                             {/* Payment info */}
