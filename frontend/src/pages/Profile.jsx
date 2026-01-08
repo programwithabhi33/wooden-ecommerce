@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { User, Package, Calendar, CreditCard, ChevronRight, Loader2 } from 'lucide-react';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
@@ -10,30 +11,63 @@ const Profile = () => {
     const [error, setError] = useState(null);
     const userInfo = JSON.parse(localStorage.getItem('userInfo'));
 
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const fetchOrders = async () => {
+        if (!userInfo) return;
+        try {
+            const response = await fetch('http://localhost:5000/api/orders/myorders', {
+                headers: {
+                    Authorization: `Bearer ${userInfo.token}`,
+                },
+            });
+            const data = await response.json();
+            if (response.ok) {
+                setOrders(data);
+            } else {
+                setError('Failed to fetch orders');
+            }
+        } catch (err) {
+            setError('Something went wrong');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchOrders = async () => {
-            if (!userInfo) return;
-            try {
-                const response = await fetch('http://localhost:5000/api/orders/myorders', {
-                    headers: {
-                        Authorization: `Bearer ${userInfo.token}`,
-                    },
-                });
-                const data = await response.json();
-                if (response.ok) {
-                    setOrders(data);
-                } else {
-                    setError('Failed to fetch orders');
+        const verifyPayment = async () => {
+            const searchParams = new URLSearchParams(location.search);
+            const success = searchParams.get('success');
+            const sessionId = searchParams.get('session_id');
+
+            if (success && sessionId && userInfo) {
+                try {
+                    const response = await fetch('http://localhost:5000/api/orders/verify-payment', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${userInfo.token}`,
+                        },
+                        body: JSON.stringify({ session_id: sessionId }),
+                    });
+
+                    if (response.ok) {
+                        // Payment verified, refresh orders
+                        fetchOrders();
+                        // Clear URL params
+                        navigate('/profile', { replace: true });
+                        alert('Payment successful! Order updated.');
+                    }
+                } catch (error) {
+                    console.error('Verification failed', error);
                 }
-            } catch (err) {
-                setError('Something went wrong');
-            } finally {
-                setLoading(false);
             }
         };
 
+        verifyPayment();
         fetchOrders();
-    }, []);
+    }, [location.search, navigate]);
 
     if (!userInfo) {
         return (
@@ -114,11 +148,11 @@ const Profile = () => {
                                                 <div className="flex items-center justify-between pt-4 border-t border-gray-50">
                                                     <div className="flex items-center">
                                                         <CreditCard className="w-4 h-4 text-gray-400 mr-2" />
-                                                        <p className="text-lg font-bold text-gray-900">${order.totalPrice}</p>
+                                                        <p className="text-lg font-bold text-gray-900">₹{order.totalPrice}</p>
                                                     </div>
-                                                    <button className="text-orange-600 font-semibold flex items-center hover:translate-x-1 transition-transform">
+                                                    <Link to={`/order/${order._id}`} className="text-orange-600 font-semibold flex items-center hover:translate-x-1 transition-transform">
                                                         View Details <ChevronRight className="w-4 h-4 ml-1" />
-                                                    </button>
+                                                    </Link>
                                                 </div>
                                             </div>
                                         ))}

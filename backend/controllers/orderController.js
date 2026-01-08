@@ -54,7 +54,7 @@ const addOrderItems = asyncHandler(async (req, res) => {
                 payment_method_types: ['card'],
                 line_items,
                 mode: 'payment',
-                success_url: `${process.env.FRONTEND_URL}/profile?success=true`,
+                success_url: `${process.env.FRONTEND_URL}/profile?success=true&session_id={CHECKOUT_SESSION_ID}`,
                 cancel_url: `${process.env.FRONTEND_URL}/cart?canceled=true`,
                 customer_email: req.user.email,
                 metadata: {
@@ -113,8 +113,60 @@ const getOrderById = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Update order to paid
+// @route   PUT /api/orders/:id/pay
+// @access  Private
+const updateOrderToPaid = asyncHandler(async (req, res) => {
+    const order = await Order.findById(req.params.id);
+
+    if (order) {
+        order.isPaid = true;
+        order.paidAt = Date.now();
+        // order.paymentResult = { ... } // Already set during creation, or update if needed
+
+        const updatedOrder = await order.save();
+        res.json(updatedOrder);
+    } else {
+        res.status(404);
+        throw new Error('Order not found');
+    }
+});
+
+// @desc    Verify Stripe payment and update order
+// @route   PUT /api/orders/verify-payment
+// @access  Private
+const verifyPayment = asyncHandler(async (req, res) => {
+    const { session_id } = req.body;
+
+    if (!session_id) {
+        res.status(400);
+        throw new Error('Session ID is required');
+    }
+
+    const order = await Order.findOne({ 'paymentResult.id': session_id });
+
+    if (order) {
+        if (order.isPaid) {
+            res.json(order); // Already paid
+            return;
+        }
+
+        order.isPaid = true;
+        order.paidAt = Date.now();
+        order.paymentResult.status = 'completed'; // Update status to completed
+
+        const updatedOrder = await order.save();
+        res.json(updatedOrder);
+    } else {
+        res.status(404);
+        throw new Error('Order not found');
+    }
+});
+
 module.exports = {
     addOrderItems,
     getMyOrders,
     getOrderById,
+    updateOrderToPaid,
+    verifyPayment,
 };
